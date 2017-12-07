@@ -1,0 +1,129 @@
+//The Shopping Cart
+/*
+Consider a store where each item has a price per unit, and may also have a volume price. For example, apples may be $1.00
+each or 4 for $3.00. Implement a point-of-sale scanning API that accepts an arbitrary ordering of products
+(similar to what would happen at a checkout line) and then returns the correct total price for an entire shopping cart based on
+the per unit prices or the volume prices as applicable.
+
+Here are the products listed by code and the prices to use (there is no sales tax):
+        Product Code | Price
+        --------------------
+        A | $2.00 each or 4 for $7.00
+        B | $12.00
+        C | $1.25 or $6 for a six pack
+        D | $0.15
+
+For your solution there should be a top level point of sale terminal service object, or namespace, that allows you to
+specify pricing, scan products, and calculate the total for a customer, similar to the pseudo code below. You are free to
+design and implement the code however you wish, including how you specify the prices in the system:
+        t= Terminal(PricingInfo)
+        t.scan(“A”)
+        t.scan(“B)”
+        t.scan(“C”)
+        t.total() -> $total for cart
+Here are the minimal inputs you should use for your test cases. These test cases must be shown to work in your program:
+Scan these items in this order: ABCDABAA; Verify the total price is $32.40.
+Scan these items in this order: CCCCCCC; Verify the total price is $7.25.
+Scan these items in this order: ABCD; Verify the total price is $15.40.
+ ** include unit tests.**
+*/
+
+import java.util.*;
+
+public class TheShoppingCart {
+
+    static Scanner in = new Scanner(System.in);
+
+    /** Summary: The GetTotal method is the main method that calls the getItemPrice and           getItemName, and when the items have been entered and the price for these items           have been calculated, it verifies that the user is ready to check out,
+        if yes then it'll output the price, if not it'll repeat until checkout **/
+    public static double getTotal() {
+        double total = 0;
+        boolean moreItems = true;
+        char response;
+        while (moreItems) {
+            total += getItemPrice(getItemName());
+
+            System.out.println("Are you sure that you want to checkout? (y/n)");
+            response = in.next().charAt(0);
+            if (response != 'n' && response != 'N')
+                moreItems = false;
+            in.nextLine();
+        }
+        return total;
+    }
+
+    /** GetItemPrice method calculates the price for these items that have been entered by         the user and handles the special offer for item A and Item C. **/
+    public static double getItemPrice(String value) {
+        double price = 0;
+
+        int countA = 0;
+        int countC = 0;
+
+
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == 'A') {
+                price = price + 2;
+            } else if (c == 'B') {
+                price = price + 12;
+            } else if (c == 'C') {
+                price = price + 1.25;
+            } else if (c == 'D') {
+                price = price + 0.15;
+            } else {
+                price = price + 0;
+            }
+        }
+
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == 'A') {
+                countA++;
+                if (countA % 4 == 0) {
+                    price -= 1;
+                }
+            }
+        }
+
+        for (int i = 0; i < value.length(); i++) {
+            char c = value.charAt(i);
+            if (c == 'C') {
+                countC++;
+                if (countC % 6 == 0) {
+                    price -= 1.5;
+                }
+            }
+        }
+        return price;
+    }
+
+    /** GetItemName validates the input of the items to sure that the user's inputs are           valid (A,B,C,and D). **/
+    public static String getItemName() {
+        System.out.println("Add items to shopping cart");
+        String name = in.nextLine().toUpperCase();
+        String results = "";
+
+        for (int i = 0; i < name.length(); i++) {
+            char c = name.charAt(i);
+            c = Character.toUpperCase(c);
+            if (c != 'A' && c != 'B' && c != 'C' && c != 'D') {
+                System.out.println("This item is not available at the store " + c);
+                results = name.replaceAll("[^a-dA-D]","");
+            }
+            }
+        System.out.println("This is what in your shopping cart " + results);
+        return (results.length() == 0) ? name : results;
+    }
+
+    //output
+    public static void main(String[] args) {
+        System.out.println("Welcome!");
+        System.out.println("These are the items that are available at the store: A, B, C, D");
+
+        double total = getTotal();
+        System.out.println("The total for your shopping cart is: " + total );
+        System.out.println("Thanks for shopping with us. Please come again");
+
+    }
+
+}

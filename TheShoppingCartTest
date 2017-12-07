@@ -1,0 +1,15 @@
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+    /** JUnit's assertTrue to check that the item's price that been hardcoded is
+        equals to the output of the getItemPrice method **/
+public class TheShoppingCartTest {
+
+    @Test
+    public void testgetItemPrice(){
+        TheShoppingCart sh = new TheShoppingCart();
+        String name = "ABCDABAA";
+        double results = sh.getItemPrice(name);
+        assertTrue(results == 32.40);
+    }
+}
